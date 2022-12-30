@@ -1,2 +1,2 @@
-pub mod dto;
-pub mod handler;
+pub mod user_dto;
+pub mod user_handler;

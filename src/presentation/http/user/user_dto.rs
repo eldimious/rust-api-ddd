@@ -1,7 +1,7 @@
 use std::convert::TryFrom;
-use dotenv::Error;
-use crate::domain::user::model::User;
+use crate::domain::user::user_model::User;
 use thiserror::Error;
+use crate::common::error::Error;
 
 pub struct CreateUserDto {
     pub first_name: String,

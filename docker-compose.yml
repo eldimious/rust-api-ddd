@@ -1,0 +1,17 @@
+version: '3.9'
+
+services:
+  database:
+    image: postgres
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: test
+    restart: unless-stopped
+    volumes:
+      - rust-api-ddd:/var/lib/postgresql/data
+
+volumes:
+  rust-api-ddd: ~
