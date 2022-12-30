@@ -1,22 +1,27 @@
 use std::sync::Arc;
 use warp::http;
 use warp::Filter;
-use crate::domain::user::service::UserService;
+use crate::domain::user::user_service::UserService;
+use crate::UserRepository;
 
-use super::user::handler;
+use super::user::user_handler;
 use super::middleware;
+
+pub struct Services {
+    pub user_service: Arc<UserService<UserRepository>>,
+}
 
 pub struct Server {
     port: u16,
+    services: Services,
 }
 
 impl Server {
-    pub fn new(port: u16) -> Self {
-        Self { port }
+    pub fn new(port: u16, services: Services) -> Self {
+        Self { port, services }
     }
 
     pub async fn run(&self) {
-        let user_service = Arc::new(UserService::new());
         let cors = warp::cors()
             .allow_any_origin()
             .allow_credentials(true)
@@ -36,14 +41,14 @@ impl Server {
 
         let create_user = users
             .and(warp::post())
-            .and(middleware::service::with_service(user_service.clone()))
+            .and(middleware::service::with_service(self.services.user_service.clone()))
             .and(warp::body::json())
-            .and_then(handler::create_user);
+            .and_then(user_handler::create_user);
 
         let list_users = users
             .and(warp::get())
-            .and(middleware::service::with_service(user_service.clone()))
-            .and_then(handler::list_users);
+            .and(middleware::service::with_service(self.services.user_service.clone()))
+            .and_then(user_handler::list_users);
 
         warp::serve(create_user.or(list_users).with(cors))
             .run(([127, 0, 0, 1], self.port))

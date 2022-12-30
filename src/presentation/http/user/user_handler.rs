@@ -3,8 +3,9 @@ use std::sync::Arc;
 use uuid::Uuid;
 use warp::reply::json;
 use warp::{reject, Rejection, Reply};
-use crate::domain::user::service::UserService;
-use crate::presentation::http::user::dto::CreateUserDto;
+use crate::domain::user::user_service::UserService;
+use crate::presentation::http::user::user_dto::CreateUserDto;
+use crate::UserRepository;
 
 #[derive(Deserialize)]
 pub struct CreateUserPayload {
@@ -25,7 +26,7 @@ pub struct UserResponse {
 }
 
 pub async fn list_users(
-    user_service: Arc<UserService>,
+    user_service: Arc<UserService<UserRepository>>,
 ) -> Result<impl Reply, Rejection> {
     match user_service.list_users().await {
         Ok(users) => Ok(json(
@@ -47,7 +48,7 @@ pub async fn list_users(
 }
 
 pub async fn create_user(
-    user_service: Arc<UserService>,
+    user_service: Arc<UserService<UserRepository>>,
     body: CreateUserPayload,
 ) -> Result<impl Reply, Rejection> {
     match user_service
