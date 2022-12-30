@@ -2,8 +2,7 @@ version: '3.9'
 
 services:
   database:
-    build:
-      context: .
+    image: postgres
     ports:
       - '5432:5432'
     environment:
@@ -12,7 +11,7 @@ services:
       POSTGRES_DB: test
     restart: unless-stopped
     volumes:
-      - postgres:/var/lib/postgresql/data
+      - rust-api-ddd:/var/lib/postgresql/data
 
 volumes:
-  postgres: ~
+  rust-api-ddd: ~

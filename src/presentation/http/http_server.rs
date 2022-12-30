@@ -52,6 +52,6 @@ impl Server {
 
         warp::serve(create_user.or(list_users).with(cors))
             .run(([127, 0, 0, 1], self.port))
-            .await
+            .await;
     }
 }

@@ -1,11 +1,12 @@
 use sqlx::Error as SqlxError;
+use thiserror::__private::AsDynError;
 use thiserror::Error as ThisError;
 
 pub type Result<T> = std::result::Result<T, Error>;
 
 #[derive(Clone, Debug, ThisError)]
 pub enum Error {
-    #[error("An error ocurred during database interaction. {0}")]
+    #[error("An error occurred during database interaction. {0}")]
     DatabaseError(String),
 }
 

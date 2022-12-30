@@ -29,7 +29,7 @@ pub async fn get_db_pool() -> Result<DbPool> {
     DB_POOL.get().await.clone()
 }
 
-pub async fn ping() -> Result<()> {
+pub async fn ping_db() -> Result<()> {
     println!("Checking on database connection...");
     let pool = get_db_pool().await?;
 
