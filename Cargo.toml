@@ -1,0 +1,16 @@
+[package]
+name = "rust-api-ddd"
+version = "0.1.0"
+authors = ["Botsaris Dimos <botsaris.d@gmail.com>"]
+edition = "2021"
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+dotenv = "0.15.0"
+lazy_static = "1.4.0"
+serde = { version = "1.0.152", features = ["derive"] }
+serde_json = "1.0.91"
+sqlx = { version = "0.6.2", features = ["migrate", "postgres", "runtime-tokio-rustls", "uuid"] }
+tokio = { version = "1.23.0", features = ["full"] }
+uuid = { version = "1.2.2", features = ["serde", "v4"] }
+warp = "0.3.3"
