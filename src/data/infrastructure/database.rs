@@ -6,17 +6,19 @@ use std::env;
 
 use crate::common::error::Error;
 use crate::common::error::Result;
+use crate::Configuration;
 
 const DB_POOL_MAX_CONNECTIONS: u32 = 5;
 
 pub type DbPool = Pool<Postgres>;
 
 lazy_static! {
-    static ref DB_POOL: AsyncOnce<Result<DbPool>> = AsyncOnce::new(async { create_pool().await });
+    static ref DB_POOL: AsyncOnce<Result<DbPool>> = AsyncOnce::new(async { create_connection().await });
 }
 
-pub async fn create_pool() -> Result<Pool<Postgres>> {
-    let db_uri = env::var("DATABASE_URL").expect("Missing \"DATABASE_URL\" environment variable");
+pub async fn create_connection() -> Result<Pool<Postgres>> {
+    let config = Configuration::new();
+    let db_uri = config.database.uri;
 
     PgPoolOptions::new()
         .max_connections(DB_POOL_MAX_CONNECTIONS)
@@ -25,13 +27,14 @@ pub async fn create_pool() -> Result<Pool<Postgres>> {
         .map_err(Error::from)
 }
 
-pub async fn get_db_pool() -> Result<DbPool> {
+pub async fn get_db_connection() -> Result<DbPool> {
     DB_POOL.get().await.clone()
 }
 
-pub async fn ping_db() -> Result<()> {
+pub async fn check_db_connection
+() -> Result<()> {
     println!("Checking on database connection...");
-    let pool = get_db_pool().await?;
+    let pool = get_db_connection().await?;
 
     sqlx::query("SELECT 1")
         .fetch_one(&pool)
