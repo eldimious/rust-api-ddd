@@ -1,5 +1,5 @@
 use async_trait::async_trait;
-use crate::common::error::Error;
+use crate::common::error::CustomError;
 use crate::data::repositories::user::user_data_store::UserDataStore;
 use crate::data::repositories::user::user_entity::UserEntity;
 use crate::domain::user::user_model::User;
@@ -17,7 +17,7 @@ impl UserRepository {
 
 #[async_trait]
 impl IUserRepository for UserRepository {
-    async fn create_user(&self, user: &User) -> Result<User, Error> {
+    async fn create_user(&self, user: &User) -> Result<User, CustomError> {
         let result: UserEntity = self
             .data_store
             .create_user(user)
@@ -26,7 +26,7 @@ impl IUserRepository for UserRepository {
         Ok(User::from(result))
     }
 
-    async fn list_users(&self) -> Result<Vec<User>, Error> {
+    async fn list_users(&self) -> Result<Vec<User>, CustomError> {
         let result: Vec<UserEntity> = self
             .data_store
             .list_users()
@@ -35,7 +35,7 @@ impl IUserRepository for UserRepository {
         Ok(result.into_iter().map(User::from).collect())
     }
 
-    async fn get_user(&self, user_id: &uuid::Uuid) -> Result<User, Error> {
+    async fn get_user(&self, user_id: &uuid::Uuid) -> Result<User, CustomError> {
         let result: UserEntity = self
             .data_store
             .get_user(user_id)

@@ -4,7 +4,7 @@ use sqlx::pool::Pool;
 use sqlx::postgres::{PgPoolOptions, Postgres};
 use std::env;
 
-use crate::common::error::Error;
+use crate::common::error::CustomError;
 use crate::common::error::Result;
 use crate::Configuration;
 
@@ -24,7 +24,7 @@ pub async fn create_connection() -> Result<Pool<Postgres>> {
         .max_connections(DB_POOL_MAX_CONNECTIONS)
         .connect(&db_uri)
         .await
-        .map_err(Error::from)
+        .map_err(CustomError::from)
 }
 
 pub async fn get_db_connection() -> Result<DbPool> {

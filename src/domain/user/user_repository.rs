@@ -1,7 +1,7 @@
 use async_trait::async_trait;
 use uuid::Uuid;
 use crate::domain::user::user_model::User;
-use crate::common::error::{Result, Error};
+use crate::common::error::{Result, CustomError};
 
 #[async_trait]
 pub trait IUserRepository {
