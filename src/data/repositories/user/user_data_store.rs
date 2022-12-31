@@ -1,6 +1,6 @@
 use async_trait::async_trait;
 use uuid::Uuid;
-use crate::common::error::{Error, Result};
+use crate::common::error::{CustomError, Result};
 use crate::data::infrastructure::database::DbPool;
 use crate::data::repositories::user::user_entity::UserEntity;
 use crate::domain::user::user_model::User;

@@ -2,10 +2,8 @@ use uuid::Uuid;
 use pwhash::bcrypt;
 
 use crate::domain::user::user_model::User;
-use crate::presentation::http::user::user_dto;
-use crate::common::error::Error;
+use crate::common::error::CustomError;
 use crate::domain::user::user_repository::IUserRepository;
-use crate::presentation::http::user::user_dto::CreateUserDto;
 use crate::common::error::Result;
 
 pub struct UserService<R>
@@ -23,8 +21,8 @@ impl<R> UserService<R>
         Self { user_repository }
     }
 
-    pub async fn create_user(&self, user: CreateUserDto) -> Result<User> {
-        let mut new_user = User::try_from(user)?;
+    pub async fn create_user(&self, user: User) -> Result<User> {
+        let mut new_user = user;
         let password_hash = bcrypt::hash(new_user.password).unwrap();
         new_user.password = password_hash;
         let user = self.user_repository.create_user(&new_user).await?;

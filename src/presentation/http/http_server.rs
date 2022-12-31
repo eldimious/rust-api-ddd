@@ -1,10 +1,12 @@
 use std::sync::Arc;
-use warp::http;
+use uuid::Uuid;
+use warp::{http, path};
 use warp::Filter;
+use warp::filters::BoxedFilter;
 use crate::domain::user::user_service::UserService;
 use crate::UserRepository;
 
-use super::user::user_handler;
+use super::user::user_controller;
 use super::middleware;
 
 pub struct Services {
@@ -14,6 +16,10 @@ pub struct Services {
 pub struct Server {
     port: u16,
     services: Services,
+}
+
+fn path_users_prefix() -> BoxedFilter<()> {
+    path!("v1" / "users" / ..).boxed()
 }
 
 impl Server {
@@ -36,21 +42,29 @@ impl Server {
                 http::Method::PUT,
             ]);
 
-        let api_v1 = warp::path("v1");
-        let users = api_v1.and(warp::path("users"));
+        let list_users = warp::get()
+            .and(path_users_prefix())
+            .and(path::end())
+            .and(middleware::service::with_service(self.services.user_service.clone()))
+            .and_then(user_controller::list_users);
 
-        let create_user = users
-            .and(warp::post())
+        let create_user = warp::post()
+            .and(path_users_prefix())
+            .and(path::end())
             .and(middleware::service::with_service(self.services.user_service.clone()))
             .and(warp::body::json())
-            .and_then(user_handler::create_user);
+            .and_then(user_controller::create_user);
 
-        let list_users = users
-            .and(warp::get())
+
+        let get_user = warp::get()
+            .and(path_users_prefix())
             .and(middleware::service::with_service(self.services.user_service.clone()))
-            .and_then(user_handler::list_users);
+            .and(path::param::<Uuid>())
+            .and_then(user_controller::get_user);
 
-        warp::serve(create_user.or(list_users).with(cors))
+        let user_routes = create_user.or(list_users).or(get_user);
+
+        warp::serve(user_routes.with(cors))
             .run(([127, 0, 0, 1], self.port))
             .await;
     }

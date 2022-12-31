@@ -66,7 +66,7 @@ impl Configuration {
     pub fn new() -> Self {
         dotenv()
             .ok()
-            .expect("Unable to find .env file. Create one based on the .env.example");;
+            .expect("Unable to find .env file. Create one based on the .env.example");
         Configuration::default()
     }
 }
